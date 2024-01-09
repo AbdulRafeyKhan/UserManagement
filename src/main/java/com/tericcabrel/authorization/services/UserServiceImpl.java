@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
                 .setAvatar(null)
                 .setTimezone(createUserDto.getTimezone())
                 .setCoordinates(createUserDto.getCoordinates())
+                .setPermissions(createUserDto.getRole().getPermissions())
                 .setRole(createUserDto.getRole());
 
         return userRepository.save(newUser);

@@ -5,17 +5,15 @@ import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Configuration
 @EnableSwagger2
@@ -24,15 +22,31 @@ public class SwaggerConfiguration {
     public Docket api(SwaggerProperties swaggerProperties) {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.tericcabrel.authorization.controllers"))
-                .paths(PathSelectors.regex("/.*"))
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiEndPointsInfo())
+                .securitySchemes(Arrays.asList(apiKey()))
+                .securityContexts(Arrays.asList(securityContext()))
                 .produces(DEFAULT_PRODUCES_AND_CONSUMES)
                 .consumes(DEFAULT_PRODUCES_AND_CONSUMES)
                 .pathMapping("/")
                 .protocols(Collections.singleton("HTTP"))
                 .useDefaultResponseMessages(Boolean.valueOf(swaggerProperties.getUseDefaultResponseMessages()));
+    }
+
+
+    private ApiKey apiKey() {
+        return new ApiKey("JWT", "Authorization", "header");
+    }
+
+    private SecurityContext securityContext() {
+        return SecurityContext.builder().securityReferences(defaultAuth()).build();
+    }
+
+    private List<SecurityReference> defaultAuth() {
+        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+        return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[]{authorizationScope}));
     }
 
     private ApiInfo apiEndPointsInfo() {
@@ -47,7 +61,7 @@ public class SwaggerConfiguration {
 
     @Bean
     public UiConfiguration tryItOutConfig() {
-        final String[] methodsWithTryItOutButton = { "" };
+        final String[] methodsWithTryItOutButton = { "get", "post", "put", "delete", "patch", "head"  };
         return UiConfigurationBuilder.builder().supportedSubmitMethods(methodsWithTryItOutButton).build();
     }
 

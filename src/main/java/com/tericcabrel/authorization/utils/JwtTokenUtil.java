@@ -1,6 +1,7 @@
 package com.tericcabrel.authorization.utils;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import static com.tericcabrel.authorization.utils.Constants.*;
 import com.tericcabrel.authorization.models.entities.User;
 
 @Component
+@PropertySource(value = {"classpath:application-example.properties"})
 public class JwtTokenUtil implements Serializable {
 
     @Value("${app.jwt.secret.key}")

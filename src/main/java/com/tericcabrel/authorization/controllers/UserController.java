@@ -66,7 +66,7 @@ public class UserController {
         @ApiResponse(code = 403, message = INVALID_DATA_MESSAGE, response = BadRequestResponse.class),
     })
     @PreAuthorize("hasAuthority('read:users')")
-    @GetMapping
+    @GetMapping("/getAllUsers")
     public ResponseEntity<UserListResponse> all(){
         return ResponseEntity.ok(new UserListResponse(userService.findAll()));
     }
@@ -91,7 +91,7 @@ public class UserController {
         @ApiResponse(code = 403, message = FORBIDDEN_MESSAGE, response = BadRequestResponse.class),
     })
     @PreAuthorize("hasAuthority('read:user')")
-    @GetMapping("/{id}")
+    @GetMapping("/getUser/{id}")
     public ResponseEntity<UserResponse> one(@PathVariable String id)
         throws ResourceNotFoundException {
         return ResponseEntity.ok(new UserResponse(userService.findById(id)));
@@ -140,7 +140,7 @@ public class UserController {
         @ApiResponse(code = 403, message = FORBIDDEN_MESSAGE, response = SuccessResponse.class),
     })
     @PreAuthorize("hasAuthority('delete:user')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         userService.delete(id);
 
